@@ -5,13 +5,16 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "server": "cross-env PORT=3000 DEBUG=W75* nodemon dist/index.js",
+    "start:dev": "cross-env PORT=3000 DEBUG=W75* nodemon dist/index.js",
     "build": "tsc --watch",
     "test": "jest --coverage",
     "test:prod": "jest --watchAll --coverage --watchAll=false --passWithNoTests",
     "test:w": "jest --watchAll --coverage --collectCoverageFrom=src/todo/**/*.{ts,tsx}",
     "test:fast": "jest --watchAll --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "api": "json-server --watch ./api/db.json",
+    "start": "node dist/index.js",
+    "build:render": "tsc"
   },
   "author": "Andrea López",
   "license": "ISC",
