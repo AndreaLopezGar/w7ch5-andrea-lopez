@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start:dev": "cross-env PORT=3000 DEBUG=W75* nodemon dist/index.js",
+    "start:dev": "cross-env PORT=3000 DEBUG=RRSS* nodemon dist/index.js",
     "build": "tsc --watch",
     "test": "jest --coverage",
     "test:prod": "jest --watchAll --coverage --watchAll=false --passWithNoTests",
@@ -53,7 +53,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.0.0",
+    "mongodb": "^6.3.0",
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
     "uuid": "^9.0.0"
