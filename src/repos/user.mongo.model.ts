@@ -37,4 +37,4 @@ userSchema.set('toJSON', {
   },
 });
 
-export const UserModel = model('User', userSchema, 'user');
+export const UserModel = model('User', userSchema, 'users');

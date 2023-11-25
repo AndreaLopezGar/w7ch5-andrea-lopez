@@ -1,18 +1,14 @@
-export type UserLoginData = {
-  userName: string;
-  password: string;
+export type UserLogin = {
+  email: string;
+  passwd: string;
 };
 
-export type UserNoId = {
+export type User = UserLogin & {
+  id: string;
   name: string;
   surname: string;
-  email: string;
+  age: number;
+  about: string;
   friends: User[];
   enemies: User[];
 };
-
-export type UserWithId = {
-  id: string;
-};
-
-export type User = UserNoId & UserWithId;
