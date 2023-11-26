@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose, { Error } from 'mongoose';
 import { HttpError } from '../types/http.error.js';
 import createDebug from 'debug';
-const debug = createDebug('Users:error:middleware');
+const debug = createDebug('RRSS:middleware:error:middleware');
 
 debug('Hello from Errors');
 export const errorMiddleware = (

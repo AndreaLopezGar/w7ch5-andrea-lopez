@@ -2,6 +2,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import express from 'express';
 import createDebug from 'debug';
+import { errorMiddleware } from './middleware/error.middleware.js';
+import { usersRouter } from './routers/users.router.js';
 
 const debug = createDebug('RRSS:app');
 
@@ -12,3 +14,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.static('public'));
+
+app.use('/users', usersRouter);
+
+app.use(errorMiddleware);

@@ -1,13 +1,13 @@
 import createDebug from 'debug';
-import { Repo } from './repo';
 import { UserLogin, User } from '../entities/user.js';
 import { UserModel } from './user.mongo.model.js';
 import { HttpError } from '../types/http.error.js';
 import { Auth } from '../services/auth.js';
+import { Repository } from './repo.js';
 
 const debug = createDebug('RRSS:user:mongo:repo');
 
-export class UsersMongoRepo implements Repo<User> {
+export class UsersMongoRepo implements Repository<User> {
   constructor() {
     debug('Instantiated');
   }
@@ -36,15 +36,24 @@ export class UsersMongoRepo implements Repo<User> {
     return result;
   }
 
-  async update(id: string, updatedItem: Partial<User>): Promise<User> {
-    const result = await UserModel.findByIdAndUpdate(id, updatedItem, {
-      new: true,
-    }).exec();
+  async update(id: string, updatedData: Partial<User>): Promise<User> {
+    const result = await UserModel.findByIdAndUpdate(
+      updatedData.id,
+      { $push: { friends: id } },
+      {
+        new: true,
+      }
+    ).exec();
     if (!result) throw new HttpError(404, 'Not Found', 'Update not possible');
     return result;
   }
 
   delete(_id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  search({ key, value }: { key: string; value: unknown }): Promise<User[]> {
     throw new Error('Method not implemented.');
   }
 }

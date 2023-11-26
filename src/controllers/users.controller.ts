@@ -7,7 +7,7 @@ import { Controller } from './controller.js';
 
 const debug = createDebug('RRSS:users:controller');
 
-export class UserController extends Controller<User> {
+export class UsersController extends Controller<User> {
   constructor(protected repo: UsersMongoRepo) {
     super(repo);
     debug('Instantiated');
@@ -34,3 +34,5 @@ export class UserController extends Controller<User> {
     }
   }
 }
+
+// Falta el LOG OUT

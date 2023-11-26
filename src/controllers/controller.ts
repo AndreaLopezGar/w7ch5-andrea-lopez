@@ -1,10 +1,10 @@
 /* eslint-disable no-useless-constructor */
-import { Repo } from '../repos/repo';
+import { Repository } from '../repos/repo.js';
 import { NextFunction, Request, Response } from 'express';
 
 export abstract class Controller<T extends { id: unknown }> {
   // eslint-disable-next-line no-unused-vars
-  constructor(protected repo: Repo<T>) {}
+  constructor(protected repo: Repository<T>) {}
 
   async getAll(_req: Request, res: Response, next: NextFunction) {
     try {
@@ -38,6 +38,36 @@ export abstract class Controller<T extends { id: unknown }> {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this.repo.update(req.params.id, req.body);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Async addFriend(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const result = await this.repo.addFriend(req.params.id, req.body);
+  //     res.json(result);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
+  // async addEnemy(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const result = await this.repo.addEnemy(req.params.id, req.body);
+  //     res.json(result);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
+  async search(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await this.repo.search({
+        key: Object.entries(req.query)[0][0] as keyof T,
+        value: Object.entries(req.query)[0][1],
+      });
       res.json(result);
     } catch (error) {
       next(error);

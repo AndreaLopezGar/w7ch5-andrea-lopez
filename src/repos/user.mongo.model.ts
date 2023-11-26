@@ -1,28 +1,32 @@
 import { Schema, model } from 'mongoose';
 import { User } from '../entities/user.js';
+import createDebug from 'debug';
+
+const debug = createDebug('RRSS:repos:user:mongo:model');
+
+debug('Hola desde models users');
 
 const userSchema = new Schema<User>({
-  userName: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
     unique: true,
+  },
+  passwd: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  surname: {
+    type: String,
+    required: false,
+  },
+  about: {
+    type: String,
+    required: false,
   },
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   enemies: [{ type: Schema.Types.ObjectId, ref: 'User' }],
@@ -37,4 +41,4 @@ userSchema.set('toJSON', {
   },
 });
 
-export const UserModel = model('User', userSchema, 'users');
+export const UserModel = model<User>('User', userSchema, 'users');
