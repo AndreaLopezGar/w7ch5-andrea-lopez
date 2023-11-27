@@ -1,20 +1,20 @@
 import createDebug from 'debug';
+import { Repository } from './repo.js';
 import { UserLogin, User } from '../entities/user.js';
 import { UserModel } from './user.mongo.model.js';
 import { HttpError } from '../types/http.error.js';
 import { Auth } from '../services/auth.js';
-import { Repository } from './repo.js';
 
-const debug = createDebug('RRSS:user:mongo:repo');
+const debug = createDebug('Users:users:mongo:repo');
 
 export class UsersMongoRepo implements Repository<User> {
   constructor() {
     debug('Instantiated');
   }
 
-  async create(newData: Omit<User, 'id'>): Promise<User> {
-    newData.passwd = await Auth.hash(newData.passwd);
-    const result: User = await UserModel.create(newData);
+  async create(newItem: Omit<User, 'id'>): Promise<User> {
+    newItem.passwd = await Auth.hash(newItem.passwd);
+    const result: User = await UserModel.create(newItem);
     return result;
   }
 
@@ -36,24 +36,112 @@ export class UsersMongoRepo implements Repository<User> {
     return result;
   }
 
-  async update(id: string, updatedData: Partial<User>): Promise<User> {
+  async search({
+    key,
+    value,
+  }: {
+    key: keyof User;
+    value: any;
+  }): Promise<User[]> {
+    const result = await UserModel.find({ [key]: value })
+      .populate('author', {
+        users: 0,
+      })
+      .exec();
+
+    return result;
+  }
+
+  async update(id: string, updatedItem: Partial<User>): Promise<User> {
+    const result = await UserModel.findByIdAndUpdate(id, updatedItem, {
+      new: true,
+    }).exec();
+    if (!result) throw new HttpError(404, 'Not Found', 'Update not possible');
+    return result;
+  }
+
+  async addFriend(id: string, updatedItem: Partial<User>): Promise<User> {
+    const user = await UserModel.findById(updatedItem.id).exec();
+    if (!user) {
+      throw new HttpError(404, 'Not Found', 'User not found');
+    }
+
+    if (user.friends.includes(id as unknown as User)) {
+      return user;
+    }
+
+    if (user.enemies.includes(id as unknown as User)) {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        updatedItem.id,
+        { $pull: { enemies: id } },
+        {
+          new: true,
+        }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new HttpError(404, 'Not Found', 'Update not possible');
+      }
+    }
+
     const result = await UserModel.findByIdAndUpdate(
-      updatedData.id,
+      updatedItem.id,
       { $push: { friends: id } },
       {
         new: true,
       }
     ).exec();
-    if (!result) throw new HttpError(404, 'Not Found', 'Update not possible');
+
+    if (!result) {
+      throw new HttpError(404, 'Not Found', 'Update not possible');
+    }
+
     return result;
   }
 
-  delete(_id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async addEnemy(id: string, updatedItem: Partial<User>): Promise<User> {
+    const user = await UserModel.findById(updatedItem.id).exec();
+    if (!user) {
+      throw new HttpError(404, 'Not Found', 'User not found');
+    }
+
+    if (user.enemies.includes(id as unknown as User)) {
+      return user;
+    }
+
+    if (user.friends.includes(id as unknown as User)) {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        updatedItem.id,
+        { $pull: { friends: id } },
+        {
+          new: true,
+        }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new HttpError(404, 'Not Found', 'Update not possible');
+      }
+    }
+
+    const result = await UserModel.findByIdAndUpdate(
+      updatedItem.id,
+      { $push: { enemies: id } },
+      {
+        new: true,
+      }
+    ).exec();
+
+    if (!result) {
+      throw new HttpError(404, 'Not Found', 'Update not possible');
+    }
+
+    return result;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  search({ key, value }: { key: string; value: unknown }): Promise<User[]> {
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<void> {
+    const result = await UserModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new HttpError(404, 'Not Found', 'Delete not possible');
+    }
   }
 }

@@ -4,7 +4,7 @@ import 'dotenv/config';
 import createDebug from 'debug';
 import { HttpError } from '../types/http.error.js';
 import { User } from '../entities/user.js';
-const debug = createDebug('W7E:auth');
+const debug = createDebug('RRSS:auth');
 
 debug('Imported');
 export type TokenPayload = {

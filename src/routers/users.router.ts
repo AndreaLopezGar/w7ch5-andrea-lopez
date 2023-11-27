@@ -13,16 +13,17 @@ const repo = new UsersMongoRepo();
 const controller = new UsersController(repo);
 const interceptor = new AuthInterceptor();
 
-usersRouter.get('/', controller.getAll.bind(controller)); // Ver todos los usuarios
-usersRouter.get('/:id', controller.getById.bind(controller)); // Ver un usario
+// Estas rutas son sin autotentificación
 
 usersRouter.post('/register', controller.create.bind(controller)); // Crear usuario
 usersRouter.post('/login', controller.login.bind(controller)); // Hacer log in
+usersRouter.get('/', controller.getAll.bind(controller)); // Ver todos los usuarios
+usersRouter.get('/:id', controller.getById.bind(controller)); // Ver un usario
 
 usersRouter.patch(
-  '/login',
+  '/:id',
   interceptor.authorization.bind(interceptor),
-  controller.login.bind(controller)
+  controller.update.bind(controller)
 );
 
 usersRouter.delete(
@@ -42,3 +43,21 @@ usersRouter.delete(
 //   interceptor.authorization.bind(interceptor),
 //   controller.addEnemy.bind(controller)
 // );
+
+// usersRouter.patch(
+//   '/remove-friend/:id',
+//   interceptor.authorization.bind(interceptor),
+//   controller.removeFriend.bind(controller)
+// );
+// // Añadir usuario a enemigos
+// usersRouter.patch(
+//   '/remove-enemy/:id',
+//   interceptor.authorization.bind(interceptor),
+//   controller.removeEnemy.bind(controller)
+// );
+
+usersRouter.patch(
+  '/login',
+  interceptor.authorization.bind(interceptor),
+  controller.login.bind(controller)
+);
